@@ -1,5 +1,5 @@
 ### STAGE 1: Build ###
-FROM openjdk:8u151-jdk AS build
+FROM openjdk:8u131-jdk AS build
 
 ENV KAFKA_MANAGER_VERSION=1.3.3.17
 
@@ -16,7 +16,7 @@ RUN echo "Building Kafka Manager" \
 
 
 ### STAGE 2: Package ###
-FROM openjdk:8u151-jre-alpine
+FROM openjdk:8u131-jre-alpine
 MAINTAINER blueapple1120@qq.com
 
 RUN apk update && apk add bash
