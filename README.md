@@ -12,9 +12,7 @@ docker run -d \
 Using docker-compose
 
 version: '3'
-
 services:
-
   kafka_manager:
   
     image: blueapple/kafka-manager-docker:latest
