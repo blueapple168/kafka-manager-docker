@@ -5,7 +5,7 @@ Using docker
 docker run -d \
      -p 9000:9000  \
      -e ZK_HOSTS="localhost:2181" \
-     hlebalbau/kafka-manager:latest \
+     blueapple/kafka-manager-docker:latest \
      -Dpidfile.path=/dev/null
 
 
@@ -13,7 +13,7 @@ Using docker-compose
 version: '3'
 services:
   kafka_manager:
-    image: hlebalbau/kafka-manager:latest
+    image: blueapple/kafka-manager-docker:latest
     ports:
       - "9000:9000"
     environment:
