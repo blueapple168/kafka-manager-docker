@@ -1,6 +1,6 @@
 FROM centos:7
 
-MAINTAINER Clement Laforet <sheepkiller@cultdeadsheep.org>
+MAINTAINER blueapple <blueapple1120@qq.com>
 
 RUN yum update -y && \
     yum install -y java-1.8.0-openjdk-headless && \
