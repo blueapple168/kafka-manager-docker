@@ -1,30 +1,34 @@
-FROM java:openjdk-8-jdk
+FROM centos:7
 
-MAINTAINER blueapple1120@qq.com
+MAINTAINER Clement Laforet <sheepkiller@cultdeadsheep.org>
 
-RUN apt-get update && \
-    apt-get install -y git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN yum update -y && \
+    yum install -y java-1.8.0-openjdk-headless && \
+    yum clean all
 
-ENV ZK_HOSTS=localhost:2181 \
+ENV JAVA_HOME=/usr/java/default/ \
+    ZK_HOSTS=localhost:2181 \
     KM_VERSION=1.3.3.17 \
+    KM_REVISION=0356db5f2698c36ec676b947c786b8543086dd49 \
     KM_CONFIGFILE="conf/application.conf"
 
-RUN curl -L https://github.com/blueapple168/kafka-manager-docker/raw/master/$KM_VERSION.tar.gz -o /tmp/kafka-manager.tar.gz && \
-    tar -xvzf /tmp/kafka-manager.tar.gz -C /tmp && \
-    mv /tmp/kafka-manager-$KM_VERSION /tmp/kafka-manager && \
+ADD start-kafka-manager.sh /kafka-manager-${KM_VERSION}/start-kafka-manager.sh
+
+RUN yum install -y java-1.8.0-openjdk-devel git wget unzip which && \
+    mkdir -p /tmp && \
+    cd /tmp && \
+    git clone https://github.com/yahoo/kafka-manager && \
     cd /tmp/kafka-manager && \
+    git checkout ${KM_REVISION} && \
     echo 'scalacOptions ++= Seq("-Xmax-classfile-name", "200")' >> build.sbt && \
     ./sbt clean dist && \
-    mkdir -p /opt && \
-    unzip  -d /opt ./target/universal/kafka-manager-${KM_VERSION}.zip && \
-    mv /opt/kafka-manager-$KM_VERSION /opt/kafka-manager && \
+    unzip  -d / ./target/universal/kafka-manager-${KM_VERSION}.zip && \
     rm -fr /tmp/* /root/.sbt /root/.ivy2 && \
-    printf '#!/bin/sh\nexec ./bin/kafka-manager -Dconfig.file=${KM_CONFIGFILE} "${KM_ARGS}" "${@}"\n' > /opt/kafka-manager/kafka-manager.sh && \
-    chmod +x /opt/kafka-manager/kafka-manager.sh
+    chmod +x /kafka-manager-${KM_VERSION}/start-kafka-manager.sh && \
+    yum autoremove -y java-1.8.0-openjdk-devel git wget unzip which && \
+    yum clean all
 
-WORKDIR /opt/kafka-manager
+WORKDIR /kafka-manager-${KM_VERSION}
 
 EXPOSE 9000
-ENTRYPOINT ["./kafka-manager.sh"]
+ENTRYPOINT ["./start-kafka-manager.sh"]
