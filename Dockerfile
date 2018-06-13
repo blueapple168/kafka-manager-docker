@@ -1,6 +1,6 @@
 FROM oraclelinux:6.8
 
-MAINTAINER IntroPro AMPADM team <ampadm@intropro.com>
+MAINTAINER blueapple <blueapple1120@qq.com>
 
 ENV JAVA_MAJOR=8 \
   JAVA_UPDATE=152 \
@@ -12,8 +12,6 @@ ENV JAVA_MAJOR=8 \
   KMANAGER_REVISION=5de818f330365fc3cd835b8227875ad12f29ed15 \
   KMANAGER_CONFIG="conf/application.conf" \
   TERM=xterm
-
-COPY kmanager-start.sh /tmp/
 
 RUN mkdir -p /usr/share/info/dir && \
   mkdir -p /usr/share/man/man1 && \
