@@ -1,6 +1,6 @@
 FROM centos:7
 
-MAINTAINER blueapple <blueapple1120@qq.com>
+MAINTAINER Clement Laforet <sheepkiller@cultdeadsheep.org>
 
 RUN yum update -y && \
     yum install -y java-1.8.0-openjdk-headless && \
@@ -8,8 +8,8 @@ RUN yum update -y && \
 
 ENV JAVA_HOME=/usr/java/default/ \
     ZK_HOSTS=localhost:2181 \
-    KM_VERSION=1.3.3.17 \
-    KM_REVISION=0356db5f2698c36ec676b947c786b8543086dd49 \
+    KM_VERSION=1.3.1.8 \
+    KM_REVISION=97329cc8bf462723232ee73dc6702c064b5908eb \
     KM_CONFIGFILE="conf/application.conf"
 
 ADD start-kafka-manager.sh /kafka-manager-${KM_VERSION}/start-kafka-manager.sh
