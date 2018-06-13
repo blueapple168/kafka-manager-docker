@@ -13,8 +13,6 @@ ENV JAVA_MAJOR=8 \
   KMANAGER_CONFIG="conf/application.conf" \
   TERM=xterm
 
-COPY kmanager-start.sh /tmp/
-
 RUN mkdir -p /usr/share/info/dir && \
   mkdir -p /usr/share/man/man1 && \
   yum update -y && \
