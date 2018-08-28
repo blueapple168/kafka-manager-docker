@@ -1,28 +1,25 @@
-FROM java:openjdk-8-jdk
+### STAGE 1: Build ###
+FROM openjdk:8u131-jdk AS build
 
-RUN apt-get update && \
-    apt-get install -y git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+ENV KAFKA_MANAGER_VERSION=1.3.3.18
 
-ENV ZK_HOSTS=localhost:2181 \
-    KM_VERSION=1.3.3.14 \
-    KM_CONFIGFILE="conf/application.conf"
+RUN echo "Building Kafka Manager" \
+    && wget "https://github.com/yahoo/kafka-manager/archive/${KAFKA_MANAGER_VERSION}.tar.gz" -O kafka-manager-sources.tar.gz \
+    && mkdir /kafka-manager-source \
+    && tar -xzf kafka-manager-sources.tar.gz -C /kafka-manager-source --strip-components=1 \
+    && cd /kafka-manager-source \
+    && echo 'scalacOptions ++= Seq("-Xmax-classfile-name", "200")' >> build.sbt \
+    && ./sbt clean dist \
+    && unzip -d ./builded ./target/universal/kafka-manager-${KAFKA_MANAGER_VERSION}.zip \
+    && mv -T ./builded/kafka-manager-${KAFKA_MANAGER_VERSION} /kafka-manager-bin
 
-RUN curl -L https://github.com/yahoo/kafka-manager/archive/$KM_VERSION.tar.gz -o /tmp/kafka-manager.tar.gz && \
-    tar -xvzf /tmp/kafka-manager.tar.gz -C /tmp && \
-    mv /tmp/kafka-manager-$KM_VERSION /tmp/kafka-manager && \
-    cd /tmp/kafka-manager && \
-    echo 'scalacOptions ++= Seq("-Xmax-classfile-name", "200")' >> build.sbt && \
-    ./sbt clean dist && \
-    mkdir -p /opt && \
-    unzip  -d /opt ./target/universal/kafka-manager-${KM_VERSION}.zip && \
-    mv /opt/kafka-manager-$KM_VERSION /opt/kafka-manager && \
-    rm -fr /tmp/* /root/.sbt /root/.ivy2 && \
-    printf '#!/bin/sh\nexec ./bin/kafka-manager -Dconfig.file=${KM_CONFIGFILE} "${KM_ARGS}" "${@}"\n' > /opt/kafka-manager/start-kafka-manager.sh && \
-    chmod +x /opt/kafka-manager/start-kafka-manager.sh
 
-WORKDIR /opt/kafka-manager
+### STAGE 2: Package ###
+FROM openjdk:8u131-jre-alpine
+MAINTAINER Hleb Albau <hleb.albau@gmail.com>
 
-EXPOSE 9000
-ENTRYPOINT ["./start-kafka-manager.sh"]
+RUN apk update && apk add bash
+COPY --from=build /kafka-manager-bin /kafka-manager
+
+VOLUME /kafka-manager/conf
+ENTRYPOINT ["/kafka-manager/bin/kafka-manager"]
