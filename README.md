@@ -4,7 +4,7 @@
 ## Description
 The latest version of the docker image is based on:  
 
-* docker image - [oraclelinux:6.8](https://hub.docker.com/_/oraclelinux/)  
+* docker image - [alpine](https://hub.docker.com/_/alpine/)  
 * java - [JDK 1.8.0_131](http://www.oracle.com/technetwork/java/javase/downloads/index.html)  
 * kafka manager - [1.3.3.18](https://github.com/yahoo/kafka-manager/releases/tag/1.3.3.18)
 
